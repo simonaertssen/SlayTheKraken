@@ -1,2 +1,2 @@
 # SlayTheKraken
-Slay the Kraken with persistent and superior trading startegies.
+Slay the Kraken with persistent and superior trading strategies.
