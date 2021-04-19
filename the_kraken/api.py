@@ -42,8 +42,7 @@ class API(object):
             self.response.raise_for_status()
         response_json = self.response.json(**self._json_options)
         kraken_api_error = response_json['error']
-        if kraken_api_error is not None:
-            print(type(kraken_api_error), kraken_api_error)
+        if kraken_api_error:
             raise KrakenError(kraken_api_error)
         return response_json
 
@@ -70,6 +69,14 @@ class API(object):
         headers = {'API-Key': self._api_key, 'API-Sign': self._signature(url, data)}
         return self._query(url, headers=headers, data=data, timeout=timeout)
     
+    # def OHLC(self, pair: str, interval: int, since: int = 0) -> dict:
+    #     if since == 0:
+    #         since = time.time()
+    #     data = {'pair': pair, 'interval'}
+    #     result = self.public_query('Balance', data=data, timeout=self._timeout)
+    #     return result
+
+
     def Balance(self) -> float:
         result = self.private_query('Balance', data={}, timeout=self._timeout)
         return result
@@ -87,5 +94,11 @@ class API(object):
 
 if __name__ == '__main__':
     krakenapi = API()
-    b = krakenapi.private_query('QueryLedgers', data={'id': [0, 1]}, timeout=1.0)
-    print(b)
+
+    with open('trading/asset_pairs.json', 'r') as myfile:
+        asset_pairs = json.load(myfile)
+    for key, value in asset_pairs.items():
+        data = {'pair': key, 'interval': 5, 'since': time.time() - 60*10}
+        b = krakenapi.public_query('OHLC', data=data, timeout=1.0)
+        print(b)
+        print(b['result'][value])

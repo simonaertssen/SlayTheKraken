@@ -8,4 +8,4 @@ class KrakenError(Exception):
             output += self._messages[0]
         else:
             output += ', '.join(self._messages)
-        return output
+        return str(self._messages)
