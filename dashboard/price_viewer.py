@@ -1,24 +1,27 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
 import io
 import matplotlib.pyplot as plt
 
-import os, sys
-print(sys.path)
 from the_kraken.api import API
 from matplotlib.figure import Figure
 from matplotlib.finance import candlestick2_ohlc
 
-plt.ion()
-for i in range(100):
-    x = range(i)
-    y = range(i)
-    # plt.gca().cla() # optionally clear axes
-    plt.plot(x, y)
-    plt.title(str(i))
-    plt.draw()
-    plt.pause(0.001)
 
-plt.show(block=False) # block=True lets the window stay open at the end of the animation.
-plt.close()
+# plt.ion()
+# for i in range(100):
+#     x = range(i)
+#     y = range(i)
+#     # plt.gca().cla() # optionally clear axes
+#     plt.plot(x, y)
+#     plt.title(str(i))
+#     plt.draw()
+#     plt.pause(0.001)
+
+# plt.show(block=False) # block=True lets the window stay open at the end of the animation.
+# plt.close()
+
 
 def plot_prices_continuously():
     self.figr = Figure(figsize=(5, 5), dpi=100, frameon=False)
@@ -46,13 +49,3 @@ def plot_prices_continuously():
     data = get_price_data()
     for time, opn, high, low, close, _, _, _ in data:
         self.plot_data = self.axes.plot([time, time], [low, high])[0]
-
-    # while(True):
-
-
-def main():
-    plot_prices_continuously()
-
-
-if __name__ == '__main__':
-    main()
