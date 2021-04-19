@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-import time
 import hmac
 import json
 import requests
 
+from time import time
 from .exception import KrakenError
 from urllib.parse import urlencode
 from hashlib import sha256, sha512
@@ -36,7 +36,7 @@ class API(object):
         self._api_secret = api_keys_data['KRAKEN_API_SECRET']
 
     def _nonce(self) -> int:
-        return int(time.time())
+        return int(time())
 
     def _query(self, url: str, headers: dict, data: dict, timeout: float) -> dict:
         url = self.api_url + url
@@ -71,14 +71,6 @@ class API(object):
         data['nonce'] = self._nonce()
         headers = {'API-Key': self._api_key, 'API-Sign': self._signature(url, data)}
         return self._query(url, headers=headers, data=data, timeout=timeout)
-    
-    # def OHLC(self, pair: str, interval: int, since: int = 0) -> dict:
-    #     if since == 0:
-    #         since = time.time()
-    #     data = {'pair': pair, 'interval'}
-    #     result = self.public_query('Balance', data=data, timeout=self._timeout)
-    #     return result
-
 
     def Balance(self) -> float:
         result = self.private_query('Balance', data={}, timeout=self._timeout)
@@ -87,12 +79,6 @@ class API(object):
     def OpenPositions(self) -> float:
         result = self.private_query('OpenPositions', data={}, timeout=self._timeout)
         return result
-
-    # def TradeBalance(self) -> float:
-    #     data = {}
-    #     result = self.private_query('TradeBalance', data={}, timeout=self._timeout)
-    #     print(result)
-    #     return result
 
 
 if __name__ == '__main__':
