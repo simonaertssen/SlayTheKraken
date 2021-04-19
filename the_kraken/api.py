@@ -4,7 +4,7 @@ import hmac
 import json
 import requests
 
-from the_kraken.exception import KrakenError
+from exception import KrakenError
 from urllib.parse import urlencode
 from hashlib import sha256, sha512
 from base64 import b64encode, b64decode

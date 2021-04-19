@@ -1,8 +1,8 @@
 import io
 import matplotlib.pyplot as plt
 
-import os
-print(os.getcwd())
+import os, sys
+print(sys.path)
 from the_kraken.api import API
 from matplotlib.figure import Figure
 from matplotlib.finance import candlestick2_ohlc
