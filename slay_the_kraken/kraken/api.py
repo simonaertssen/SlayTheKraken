@@ -7,10 +7,11 @@ import json
 import requests
 
 from time import time
-from .exception import KrakenError
-from urllib.parse import urlencode
 from hashlib import sha256, sha512
+from urllib.parse import urlencode
 from base64 import b64encode, b64decode
+
+from slay_the_kraken.kraken.exception import KrakenError
 
 
 class API(object):
@@ -30,7 +31,7 @@ class API(object):
         self._load_keys()
 
     def _load_keys(self) -> None:
-        with open('env/api_keys.json', 'r') as myfile:
+        with open('slay_the_kraken/env/api_keys.json', 'r') as myfile:
             api_keys_data = json.load(myfile)
         self._api_key = api_keys_data['KRAKEN_API_KEY']
         self._api_secret = api_keys_data['KRAKEN_API_SECRET']
@@ -84,7 +85,7 @@ class API(object):
 if __name__ == '__main__':
     krakenapi = API()
 
-    with open('trading/asset_pairs.json', 'r') as myfile:
+    with open('slay_the_kraken/trading/asset_pairs.json', 'r') as myfile:
         asset_pairs = json.load(myfile)
     for key, value in asset_pairs.items():
         data = {'pair': key, 'interval': 5, 'since': time.time() - 60*10}

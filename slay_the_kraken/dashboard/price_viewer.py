@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import io
-from time import time
+import time
+import json
 import matplotlib.pyplot as plt
 
-from the_kraken.api import API
 from matplotlib.figure import Figure
+
+from slay_the_kraken.kraken.api import API
 
 # plt.ion()
 # for i in range(100):
@@ -32,19 +34,21 @@ def plot_prices_continuously():
     axes.set_xlabel('$Time$')
     axes.set_ylabel('$Price$')
 
-    now = time()
+    now = 0
     then = now - 7*24*60*30  # 30 days ago
     interval = (now - then) / 720
     print('interval', interval)
 
     krakenapi = API()
-    with open('trading/asset_pairs.json', 'r') as myfile:
+    with open('slay_the_kraken/trading/asset_pairs.json', 'r') as myfile:
         asset_pair = json.load(myfile)
+        print(type(asset_pair))
     def get_price_data():
-        data = {'pair': asset_pair.keys(0), 'interval': 1, 'since': then}
+        (key, value), = asset_pair.items()
+        data = {'pair': key, 'interval': 1, 'since': then}
         query = krakenapi.public_query('OHLC', data=data, timeout=1.0)
-        return query['result'][asset_pair.values(0)]
+        return query['result'][value]
 
     data = get_price_data()
     for time, opn, high, low, close, _, _, _ in data:
-        self.plot_data = self.axes.plot([time, time], [low, high])[0]
+        plot_data = axes.plot([time, time], [low, high])[0]
