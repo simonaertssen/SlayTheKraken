@@ -3,6 +3,7 @@
 
 import os, sys
 print(sys.path)
+print(os.getcwd())
 
 
 from dashboard import plot_prices_continuously

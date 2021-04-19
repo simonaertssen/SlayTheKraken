@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 
 from the_kraken.api import API
 from matplotlib.figure import Figure
-from matplotlib.finance import candlestick2_ohlc
-
 
 # plt.ion()
 # for i in range(100):
