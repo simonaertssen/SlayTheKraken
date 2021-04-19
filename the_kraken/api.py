@@ -4,7 +4,7 @@ import hmac
 import json
 import requests
 
-from exception import KrakenError
+from the_kraken.exception import KrakenError
 from urllib.parse import urlencode
 from hashlib import sha256, sha512
 from base64 import b64encode, b64decode
@@ -100,5 +100,4 @@ if __name__ == '__main__':
     for key, value in asset_pairs.items():
         data = {'pair': key, 'interval': 5, 'since': time.time() - 60*10}
         b = krakenapi.public_query('OHLC', data=data, timeout=1.0)
-        print(b)
         print(b['result'][value])
