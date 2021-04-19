@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import io
+from time import time
 import matplotlib.pyplot as plt
 
 from the_kraken.api import API
@@ -22,16 +23,16 @@ from matplotlib.figure import Figure
 
 
 def plot_prices_continuously():
-    self.figr = Figure(figsize=(5, 5), dpi=100, frameon=False)
-    self.axes = self.fig.gca(projection='2d')
+    fig = Figure(figsize=(5, 5), dpi=100, frameon=False)
+    axes = fig.gca()
 
-    self.axes.set_xlim(0, 0.5)
-    self.axes.set_ylim(0, 0.5)
+    axes.set_xlim(0, 0.5)
+    axes.set_ylim(0, 0.5)
 
-    self.axes.set_xlabel('$Time$')
-    self.axes.set_ylabel('$Price$')
+    axes.set_xlabel('$Time$')
+    axes.set_ylabel('$Price$')
 
-    now = time.time()
+    now = time()
     then = now - 7*24*60*30  # 30 days ago
     interval = (now - then) / 720
     print('interval', interval)
