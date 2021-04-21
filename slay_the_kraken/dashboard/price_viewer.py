@@ -2,47 +2,33 @@
 # -*- coding: utf-8 -*-
 
 import io
-import time
 import json
+import datetime
 import matplotlib.pyplot as plt
 
+from time import time, ctime
 from matplotlib.figure import Figure
-
 from slay_the_kraken.kraken.api import API
-
-# plt.ion()
-# for i in range(100):
-#     x = range(i)
-#     y = range(i)
-#     # plt.gca().cla() # optionally clear axes
-#     plt.plot(x, y)
-#     plt.title(str(i))
-#     plt.draw()
-#     plt.pause(0.001)
-
-# plt.show(block=False) # block=True lets the window stay open at the end of the animation.
-# plt.close()
 
 
 def plot_prices_continuously():
-    fig = Figure(figsize=(5, 5), dpi=100, frameon=False)
-    axes = fig.gca()
+    plt.figure()
 
-    axes.set_xlim(0, 0.5)
-    axes.set_ylim(0, 0.5)
+    plt.xlabel('$Time$')
+    plt.ylabel('$Price$')
 
-    axes.set_xlabel('$Time$')
-    axes.set_ylabel('$Price$')
+    now = ctime()
+    interval = 60*60 
+    then = ctime(time() - interval)
+    print(now, then)
 
-    now = 0
-    then = now - 7*24*60*30  # 30 days ago
-    interval = (now - then) / 720
-    print('interval', interval)
+    plt.xaxis([now, then])
+    plt.ylabel('$Price$')
 
     krakenapi = API()
     with open('slay_the_kraken/trading/asset_pairs.json', 'r') as myfile:
         asset_pair = json.load(myfile)
-        print(type(asset_pair))
+
     def get_price_data():
         (key, value), = asset_pair.items()
         data = {'pair': key, 'interval': 1, 'since': then}
@@ -50,5 +36,11 @@ def plot_prices_continuously():
         return query['result'][value]
 
     data = get_price_data()
-    for time, opn, high, low, close, _, _, _ in data:
-        plot_data = axes.plot([time, time], [low, high])[0]
+    print(len(data))
+    for t, opn, high, low, close, _, _, _ in data:
+        timestamp = time.ctime(t)
+        plt.plot([timestamp, timestamp], [low, high])
+
+    plt.show(block=False)
+    plt.pause(2)
+    plt.close()

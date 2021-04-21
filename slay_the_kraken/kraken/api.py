@@ -88,6 +88,6 @@ if __name__ == '__main__':
     with open('slay_the_kraken/trading/asset_pairs.json', 'r') as myfile:
         asset_pairs = json.load(myfile)
     for key, value in asset_pairs.items():
-        data = {'pair': key, 'interval': 5, 'since': time.time() - 60*10}
+        data = {'pair': key, 'interval': 5, 'since': time() - 60*10}
         b = krakenapi.public_query('OHLC', data=data, timeout=1.0)
         print(b['result'][value])
