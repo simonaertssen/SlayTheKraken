@@ -63,20 +63,20 @@ class API(object):
     def close(self):
         self.session.close()
 
-    def public_query(self, method: str, data: dict, timeout: int) -> dict:
+    def public_query(self, method: str, data: dict) -> dict:
         url: str = '/' + self._api_version + '/public/' + method
-        return self._query(url, headers={}, data=data, timeout=timeout)
+        return self._query(url, headers={}, data=data, timeout=self._timeout)
 
-    def private_query(self, method: str, data: dict, timeout: int) -> dict:
+    def private_query(self, method: str, data: dict) -> dict:
         url: str = '/' + self._api_version + '/private/' + method
         data['nonce'] = self._nonce()
         headers: dict = {'API-Key': self._api_key, 'API-Sign': self._signature(url, data)}
-        return self._query(url, headers=headers, data=data, timeout=timeout)
+        return self._query(url, headers=headers, data=data, timeout=self._timeout)
 
     def Balance(self) -> float:
-        result: float = self.private_query('Balance', data={}, timeout=self._timeout)
+        result: float = self.private_query('Balance', data={})
         return result
 
     def OpenPositions(self) -> float:
-        result: float = self.private_query('OpenPositions', data={}, timeout=self._timeout)
+        result: float = self.private_query('OpenPositions', data={})
         return result
