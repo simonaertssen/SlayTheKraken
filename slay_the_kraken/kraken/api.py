@@ -11,7 +11,7 @@ from hashlib import sha256, sha512
 from urllib.parse import urlencode
 from base64 import b64encode, b64decode
 
-from slay_the_kraken.kraken.exception import KrakenError
+from slay_the_kraken.kraken.exceptions import KrakenError
 
 
 class API(object):
@@ -73,10 +73,10 @@ class API(object):
         headers: dict = {'API-Key': self._api_key, 'API-Sign': self._signature(url, data)}
         return self._query(url, headers=headers, data=data, timeout=self._timeout)
 
-    def Balance(self) -> float:
-        result: float = self.private_query('Balance', data={})
+    def Balance(self) -> dict:
+        result: dict = self.private_query('Balance', data={})
         return result
 
-    def OpenPositions(self) -> float:
-        result: float = self.private_query('OpenPositions', data={})
+    def OpenPositions(self) -> dict:
+        result: dict = self.private_query('OpenPositions', data={})
         return result

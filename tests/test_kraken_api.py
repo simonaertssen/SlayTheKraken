@@ -1,11 +1,11 @@
 import time
 import unittest
 
-from wsgiref.handlers import format_date_time
-from datetime import datetime
-from time import gmtime, mktime, strftime
+from unittest import mock
+from time import gmtime, strftime
 
 from slay_the_kraken.kraken.api import API
+from slay_the_kraken.kraken.exceptions import KrakenError
 
 
 class TestKrakenAPI(unittest.TestCase):
@@ -28,6 +28,14 @@ class TestKrakenAPI(unittest.TestCase):
         secnd: int = self.api._nonce()
         self.assertLess(first, secnd)
 
+    def test_errors(self) -> None:
+        """Test whether the error/exception mechanism works correctly."""
+        def minus(): return -1
+        with mock.patch.object(self.api, '_nonce', minus):
+            with self.assertRaises(KrakenError) as ne:
+                self.api.Balance()
+            self.assertEqual(str(ne.exception), "['EAPI:Invalid nonce']")
+
     def test_signature(self) -> None:
         """Make a fake order and test whether the signature is as expected."""
         tmp: str = self.api._api_secret
@@ -45,18 +53,24 @@ class TestKrakenAPI(unittest.TestCase):
         expected: str = '4/dpxb3iT4tp/ZCVEwSnEsLxx0bqyhLpdfOpc6fn7OR8+UClSV5n9E6aSS8MPtnRfp32bAb0nmbRn6H8ndwLUQ=='
         received: str = self.api._signature(url, data)
         self.assertEqual(received, expected)
+        self.api._api_secret = tmp
 
     def test_public_method(self) -> None:
         """Test whether the public requests function correctly."""
-        servertime: float = self.api.public_query('Time', data={})
-
-        self.assertEqual(servertime['error'], [])
-
         unixtime: int = int(time.time())
+
+        servertime: float = self.api.public_query('Time', data={})
+        self.assertEqual(servertime['error'], [])
         self.assertEqual(servertime['result']['unixtime'], unixtime)
 
         rfc1123: str = strftime("%a, %d %b %y %H:%M:%S +0000", gmtime())
         self.assertEqual(servertime['result']['rfc1123'], rfc1123)
+
+    def test_private_method(self) -> None:
+        """Test whether the private requests function correctly."""
+        balance: dict = self.api.Balance()
+        self.assertEqual(balance['error'], [])
+        self.assertIsInstance(balance['result'], dict)
 
 
 if __name__ == '__main__':
