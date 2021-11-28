@@ -19,7 +19,7 @@ class API(object):
     _api_key: str = ''
     _api_secret: str = ''
     _api_version: str = '0'
-    _timeout: float = 1.0
+    _timeout: float = 5.0
     _json_options: dict = {}
 
     # Public:
@@ -80,14 +80,3 @@ class API(object):
     def OpenPositions(self) -> float:
         result: float = self.private_query('OpenPositions', data={}, timeout=self._timeout)
         return result
-
-
-if __name__ == '__main__':
-    krakenapi = API()
-
-    with open('slay_the_kraken/trading/asset_pairs.json', 'r') as myfile:
-        asset_pairs = json.load(myfile)
-    for key, value in asset_pairs.items():
-        data = {'pair': key, 'interval': 5, 'since': time() - 60*10}
-        b = krakenapi.public_query('OHLC', data=data, timeout=1.0)
-        print(b['result'][value])
