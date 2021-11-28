@@ -6,7 +6,7 @@ import hmac
 import json
 import requests
 
-from time import time
+from time import time_ns
 from hashlib import sha256, sha512
 from urllib.parse import urlencode
 from base64 import b64encode, b64decode
@@ -16,15 +16,15 @@ from slay_the_kraken.kraken.exception import KrakenError
 
 class API(object):
     # Private:
-    _api_key: str       = ''
-    _api_secret: str    = ''
-    _api_version: str   = '0'
-    _timeout: float     = 1.0
+    _api_key: str = ''
+    _api_secret: str = ''
+    _api_version: str = '0'
+    _timeout: float = 1.0
     _json_options: dict = {}
 
     # Public:
     api_url: str = 'https://api.kraken.com'
-    session: requests.Session  = requests.Session()
+    session: requests.Session = requests.Session()
     respons: requests.Response = requests.Response()
 
     def __init__(self) -> None:
@@ -33,14 +33,14 @@ class API(object):
     def _load_keys(self) -> None:
         with open('slay_the_kraken/env/api_keys.json', 'r') as myfile:
             api_keys_data = json.load(myfile)
-        self._api_key = api_keys_data['KRAKEN_API_KEY']
-        self._api_secret = api_keys_data['KRAKEN_API_SECRET']
+        self._api_key: str = api_keys_data['KRAKEN_API_KEY']
+        self._api_secret: str = api_keys_data['KRAKEN_API_SECRET']
 
     def _nonce(self) -> int:
-        return int(time())
+        return int(time_ns())
 
     def _query(self, url: str, headers: dict, data: dict, timeout: float) -> dict:
-        url = self.api_url + url
+        url: str = self.api_url + url
         self.response = self.session.post(url, headers=headers, data=data, timeout=timeout)
         if self.response.status_code not in (200, 201, 202):
             self.response.raise_for_status()
@@ -64,21 +64,21 @@ class API(object):
         self.session.close()
 
     def public_query(self, method: str, data: dict, timeout: int) -> dict:
-        url = '/' + self._api_version + '/public/' + method
+        url: str = '/' + self._api_version + '/public/' + method
         return self._query(url, headers={}, data=data, timeout=timeout)
 
     def private_query(self, method: str, data: dict, timeout: int) -> dict:
-        url = '/' + self._api_version + '/private/' + method
+        url: str = '/' + self._api_version + '/private/' + method
         data['nonce'] = self._nonce()
-        headers = {'API-Key': self._api_key, 'API-Sign': self._signature(url, data)}
+        headers: dict = {'API-Key': self._api_key, 'API-Sign': self._signature(url, data)}
         return self._query(url, headers=headers, data=data, timeout=timeout)
 
     def Balance(self) -> float:
-        result = self.private_query('Balance', data={}, timeout=self._timeout)
+        result: float = self.private_query('Balance', data={}, timeout=self._timeout)
         return result
 
     def OpenPositions(self) -> float:
-        result = self.private_query('OpenPositions', data={}, timeout=self._timeout)
+        result: float = self.private_query('OpenPositions', data={}, timeout=self._timeout)
         return result
 
 
