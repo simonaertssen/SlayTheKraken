@@ -59,9 +59,9 @@ class TestKrakenAPI(unittest.TestCase):
         """Test whether the public requests function correctly."""
         unixtime: int = int(time.time())
 
-        servertime: float = self.api.public_query('Time', data={})
+        servertime: dict = self.api.public_query('Time', data={})
         self.assertEqual(servertime['error'], [])
-        self.assertEqual(servertime['result']['unixtime'], unixtime)
+        self.assertAlmostEqual(servertime['result']['unixtime'], unixtime, -1)
 
         rfc1123: str = strftime("%a, %d %b %y %H:%M:%S +0000", gmtime())
         self.assertEqual(servertime['result']['rfc1123'], rfc1123)
@@ -71,6 +71,13 @@ class TestKrakenAPI(unittest.TestCase):
         balance: dict = self.api.Balance()
         self.assertEqual(balance['error'], [])
         self.assertIsInstance(balance['result'], dict)
+
+    def test_api(self):
+        # print(self.api.OHLC('ZEUR', ))
+        # self.api.OHLC('ZEUR', interval=1)
+        # self.api.OHLC('ZEUR', since=time() - )
+        # self.api.OHLC('ZEUR', interval=1)
+        print(self.api.OHLC('ZEUR', interval=1))
 
 
 if __name__ == '__main__':
