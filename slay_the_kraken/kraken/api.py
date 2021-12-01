@@ -14,6 +14,7 @@ from slay_the_kraken.kraken.exceptions import KrakenError
 
 
 class API(object):
+    """Represents an instance that communicates with the kraken exchange."""
     # Private:
     _api_key: str = ''
     _api_secret: str = ''
@@ -30,15 +31,18 @@ class API(object):
         self._load_keys()
 
     def _load_keys(self) -> None:
+        """Load keys from the .env directory into memory."""
         with open('slay_the_kraken/env/api_keys.json', 'r') as myfile:
             api_keys_data = json.load(myfile)
         self._api_key: str = api_keys_data['KRAKEN_API_KEY']
         self._api_secret: str = api_keys_data['KRAKEN_API_SECRET']
 
     def _nonce(self) -> int:
+        """An ever increasing value as unique identifier."""
         return int(time_ns())
 
     def _query(self, url: str, headers: dict, data: dict, timeout: float) -> dict:
+        """Wrapper around a simple request."""
         url: str = self.api_url + url
         self.response = self.session.post(url, headers=headers, data=data, timeout=timeout)
         if self.response.status_code not in (200, 201, 202):
@@ -50,6 +54,7 @@ class API(object):
         return response_json
 
     def _signature(self, url_path: str, data: dict) -> str:
+        """Sign and hash the given data."""
         nonce = str(data['nonce'])
         data_encoded = urlencode(data)
         # Unicode-objects must be encoded before hashing
@@ -60,24 +65,24 @@ class API(object):
         return sigdigest.decode()
 
     def close(self):
+        """Close the connection to the exchange."""
         self.session.close()
 
     def public_query(self, method: str, data: dict) -> dict:
+        """Query without having to sign."""
         url: str = '/' + self._api_version + '/public/' + method
         return self._query(url, headers={}, data=data, timeout=self._timeout)
 
     def private_query(self, method: str, data: dict) -> dict:
+        """Query with having to sign."""
         url: str = '/' + self._api_version + '/private/' + method
         data['nonce'] = self._nonce()
         headers: dict = {'API-Key': self._api_key, 'API-Sign': self._signature(url, data)}
         return self._query(url, headers=headers, data=data, timeout=self._timeout)
 
     def Balance(self) -> dict:
+        """Returns the account balance."""
         result: dict = self.private_query('Balance', data={})
-        return result
-
-    def OpenPositions(self) -> dict:
-        result: dict = self.private_query('OpenPositions', data={})
         return result
 
     def OHLC(self, pair: str, interval: int = 5) -> dict:
